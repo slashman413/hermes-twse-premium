@@ -1,0 +1,58 @@
+name: TWSE Premium Scanner
+
+on:
+  schedule:
+    # Scan at market open (01:00 UTC = 09:00 Taipei) and close (05:30 UTC = 13:30 Taipei)
+    - cron: "0 1 * * 1-5"   # Weekdays 09:00 Taipei
+    - cron: "30 5 * * 1-5"  # Weekdays 13:30 Taipei
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: slashman413/twse-surge-stocks-dna
+          path: twse-surge-stocks-dna
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          pip install pandas numpy requests python-dotenv yfinance 2>/dev/null || true
+
+      - name: Run scan and notify
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        run: |
+          python scripts/premium.py scan
+
+      - name: Deploy landing page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+
+      - name: Commit data
+        run: |
+          git config user.name "hermes-agent"
+          git config user.email "hermes@nousresearch.com"
+          git add docs/ data/
+          git diff --staged --quiet || git commit -m "auto: daily signal scan"
+          git push
