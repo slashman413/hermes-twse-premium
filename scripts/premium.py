@@ -353,24 +353,24 @@ def main():
             print("⚠️ Invalid JSON payload from webhook")
             return
 
-        event = payload.get("event_type", "")
-        data = payload.get("client_payload", {})
+        # Support two input formats:
+        # 1) Direct: {"email":"...", "tier":"monthly"}
+        # 2) Full dispatch: {"event_type":"...", "client_payload":{...}}
+        email = payload.get("email", "") or payload.get("client_payload", {}).get("email", "")
+        tier = payload.get("tier", "monthly") or payload.get("client_payload", {}).get("tier", "monthly")
+        event = payload.get("event_type", "kofi_subscription")
 
-        if event == "kofi_subscription" or event == "kofi_shop_order":
-            email = data.get("email", "")
-            tier = data.get("tier", "monthly")
-            if email:
-                _register_customer(email, tier)
-            else:
-                print("⚠️ Webhook received but no email in payload")
+        if not email:
+            print("⚠️ Webhook received but no email in payload")
+            return
 
-        elif event == "kofi_cancellation" or event == "kofi_refund":
-            email = data.get("email", "")
-            if email:
-                _cancel_customer(email)
-
+        if event in ("kofi_subscription", "kofi_shop_order"):
+            _register_customer(email, tier)
+        elif event in ("kofi_cancellation", "kofi_refund"):
+            _cancel_customer(email)
         else:
-            print(f"⚠️ Unknown event type: {event}")
+            # Unknown event, still try to register if we have an email
+            _register_customer(email, tier)
 
     elif cmd == "cancel":
         if len(sys.argv) >= 3:
