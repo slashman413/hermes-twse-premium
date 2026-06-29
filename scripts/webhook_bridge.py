@@ -61,24 +61,43 @@ class WebhookHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length).decode()
-        print("[IN] Webhook received: %s..." % body[:200])
+        print("[IN] Webhook received: %s..." % body[:300])
+
+        # Ko-fi sends data as form-urlencoded: data={JSON}
+        payload_raw = body
+        content_type = self.headers.get("Content-Type", "")
+
+        if "x-www-form-urlencoded" in content_type:
+            # Parse form data: data={"type":"Subscription","email":"..."}
+            import urllib.parse
+            form = urllib.parse.parse_qs(body)
+            payload_raw = form.get("data", [body])[0]
 
         try:
-            data = json.loads(body)
+            data = json.loads(payload_raw)
         except json.JSONDecodeError:
+            print("[ERR] Invalid JSON: %s" % payload_raw[:200])
             self.send_error(400, "Invalid JSON")
             return
 
-        # Extract email from various Ko-fi payload formats
-        email = data.get("email", "") or data.get("buyer_email", "") or ""
-        tier = data.get("tier_name", "") or data.get("tier", "") or data.get("membership_tier", "") or "monthly"
-        event = data.get("type", "") or data.get("event_type", "") or "kofi_subscription"
+        # Extract fields from Ko-fi payload
+        email = data.get("email", "") or ""
+        tier = data.get("tier_name", "") or data.get("tier", "") or "monthly"
+        event_type_raw = data.get("type", "") or ""
+        is_sub_payment = data.get("is_subscription_payment", False)
+        is_first = data.get("is_first_subscription_payment", False)
+
+        print("[INFO] Event: %s | Email: %s | Tier: %s" % (event_type_raw, email, tier))
 
         if email:
-            event_type = "kofi_cancellation" if ("cancel" in event.lower() or "refund" in event.lower()) else "kofi_subscription"
-            forward_to_github(event_type, email, tier)
+            if "cancel" in event_type_raw.lower() or "refund" in event_type_raw.lower():
+                forward_to_github("kofi_cancellation", email, tier)
+            elif event_type_raw in ("Subscription", "Shop Order") and (is_first or is_sub_payment):
+                forward_to_github("kofi_subscription", email, tier)
+            else:
+                print("[WARN] Unknown event type: %s" % event_type_raw)
         else:
-            print("[WARN] No email in payload: %s" % body[:300])
+            print("[WARN] No email in payload: %s" % payload_raw[:300])
 
         self.send_response(200)
         self.end_headers()
