@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TWSE Premium — 台股即時訊號</title>
+<title>TWSE Premium — Taiwan Stock Signals</title>
 <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:-apple-system,sans-serif; background:#0a0a1a; color:#e2e8f0; }
@@ -24,68 +24,68 @@
     <div class="container">
         <header>
             <h1>📊 TWSE Premium</h1>
-            <p style="color:#94a3b8;font-size:1.2rem;">台股自動掃描 · 即時訊號 · 每日通知</p>
+            <p style="color:#94a3b8;font-size:1.2rem;">AI stock scanning · Real-time signals · Daily alerts</p>
         </header>
-        
+
         <div class="preview">
-            <h2>🔍 今日掃描結果預覽</h2>
-            <div id="signals">載入中...</div>
+            <h2>🔍 Today's Scan Preview</h2>
+            <div id="signals">Loading...</div>
         </div>
-        
-        <h2 style="text-align:center;margin:30px 0;">📋 方案選擇</h2>
+
+        <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
         <div class="pricing-grid">
         <div class="pricing-card">
-            <h3>月費方案</h3>
+            <h3>Monthly</h3>
             <p class="price">$49</p>
             <ul>
-                <li>📊 每日 2 次掃描</li>
-                <li>📧 Email 通知</li>
-                <li>❌ 無 SMS</li>
-                <li>📈 大盤指標分析</li>
-                <li>🔍 個股評分系統</li>
+                <li>📊 2 scans/day</li>
+                <li>📧 Email notification</li>
+                <li>❌ No SMS</li>
+                <li>📈 Market analysis</li>
+                <li>🔍 Stock scoring system</li>
             </ul>
-            <a href="https://buy.stripe.com/test_XXX_monthly" class="cta-btn">立即訂閱</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
         </div>
         <div class="pricing-card">
-            <h3>季費方案</h3>
+            <h3>Quarterly</h3>
             <p class="price">$99</p>
             <ul>
-                <li>📊 每日 4 次掃描</li>
-                <li>📧 Email 通知</li>
-                <li>❌ 無 SMS</li>
-                <li>📈 大盤指標分析</li>
-                <li>🔍 個股評分系統</li>
+                <li>📊 4 scans/day</li>
+                <li>📧 Email notification</li>
+                <li>❌ No SMS</li>
+                <li>📈 Market analysis</li>
+                <li>🔍 Stock scoring system</li>
             </ul>
-            <a href="https://buy.stripe.com/test_XXX_quarterly" class="cta-btn">立即訂閱</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
         </div>
         <div class="pricing-card">
-            <h3>年費方案</h3>
+            <h3>Annual</h3>
             <p class="price">$299</p>
             <ul>
-                <li>📊 每日 10 次掃描</li>
-                <li>📧 Email 通知</li>
-                <li>📱 SMS 簡訊通知</li>
-                <li>📈 大盤指標分析</li>
-                <li>🔍 個股評分系統</li>
+                <li>📊 10 scans/day</li>
+                <li>📧 Email notification</li>
+                <li>📱 SMS alerts</li>
+                <li>📈 Market analysis</li>
+                <li>🔍 Stock scoring system</li>
             </ul>
-            <a href="https://buy.stripe.com/test_XXX_annual" class="cta-btn">立即訂閱</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
         </div>
         <div class="pricing-card">
-            <h3>終身方案</h3>
+            <h3>Lifetime</h3>
             <p class="price">$999</p>
             <ul>
-                <li>📊 每日 999 次掃描</li>
-                <li>📧 Email 通知</li>
-                <li>📱 SMS 簡訊通知</li>
-                <li>📈 大盤指標分析</li>
-                <li>🔍 個股評分系統</li>
+                <li>📊 999 scans/day</li>
+                <li>📧 Email notification</li>
+                <li>📱 SMS alerts</li>
+                <li>📈 Market analysis</li>
+                <li>🔍 Stock scoring system</li>
             </ul>
-            <a href="https://buy.stripe.com/test_XXX_lifetime" class="cta-btn">立即訂閱</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
         </div></div>
-        
+
         <footer>
-            <p>TWSE Premium by slashman413 · 數據來源：公開市場資訊</p>
-            <p>⚠️ 投資有風險，本服務僅供參考</p>
+            <p>TWSE Premium by slashman413 · Data source: public market info</p>
+            <p>⚠️ Trading carries risk. This service is for reference only.</p>
         </footer>
     </div>
     <script>
@@ -96,7 +96,7 @@
                 '<div class="signal ' + (s.signal==='SELL'?'sell':'') + '">' +
                 '<b>' + s.ticker + ' ' + s.name + '</b> ' +
                 '<span style="color:' + (s.signal==='BUY'?'#22c55e':'#ef4444') + '">' + s.signal + '</span> ' +
-                '得分: ' + s.score + '<br><small>' + s.reason + '</small></div>'
+                'Score: ' + s.score + '<br><small>' + s.reason + '</small></div>'
             ).join('');
         });
     </script>
