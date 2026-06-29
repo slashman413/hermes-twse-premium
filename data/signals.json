@@ -1,0 +1,54 @@
+[
+  {
+    "date": "2026-06-29",
+    "time": "13:51",
+    "total_signals": 0,
+    "buys": 0,
+    "sells": 0,
+    "top_picks": []
+  },
+  {
+    "date": "2026-06-29",
+    "time": "13:52",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "top_picks": [
+      {
+        "ticker": "2330",
+        "name": "台積電",
+        "signal": "BUY",
+        "score": 92,
+        "reason": "MACD黃金交叉+ADX>25+外資連續買超5日"
+      },
+      {
+        "ticker": "2317",
+        "name": "鴻海",
+        "signal": "BUY",
+        "score": 85,
+        "reason": "突破月線+成交量放大2倍+KD黃金交叉"
+      },
+      {
+        "ticker": "2454",
+        "name": "聯發科",
+        "signal": "HOLD",
+        "score": 65,
+        "reason": "RSI中性區間+外資買賣互見"
+      },
+      {
+        "ticker": "2412",
+        "name": "中華電",
+        "signal": "SELL",
+        "score": 30,
+        "reason": "MACD死亡交叉+投信連續賣超"
+      },
+      {
+        "ticker": "2002",
+        "name": "中鋼",
+        "signal": "BUY",
+        "score": 78,
+        "reason": "低檔十字線+外資轉買+本益比偏低"
+      }
+    ]
+  }
+]
