@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-TWSE Premium — 台股即時訊號通知服務。
-自動掃描台股技術訊號，透過 Email/Telegram 發送給付費客戶。
+TWSE Premium — Taiwan stock signal notification service.
+Automatically scans TWSE technical signals and emails paying customers.
 """
-import os, sys, json, smtplib, subprocess
+import os, sys, json, smtplib, subprocess, uuid
 from pathlib import Path
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
@@ -17,10 +17,20 @@ INCOME_LOG = DATA_DIR / "income_log.json"
 
 # Pricing
 TIERS = {
-    "monthly": {"price": 49, "name": "月費方案", "signals_per_day": 2, "sms": False},
-    "quarterly": {"price": 99, "name": "季費方案", "signals_per_day": 4, "sms": False},
-    "annual": {"price": 299, "name": "年費方案", "signals_per_day": 10, "sms": True},
-    "lifetime": {"price": 999, "name": "終身方案", "signals_per_day": 999, "sms": True},
+    "monthly": {"price": 49, "name": "Monthly", "signals_per_day": 2, "sms": False},
+    "quarterly": {"price": 99, "name": "Quarterly", "signals_per_day": 4, "sms": False},
+    "annual": {"price": 299, "name": "Annual", "signals_per_day": 10, "sms": True},
+    "lifetime": {"price": 999, "name": "Lifetime", "signals_per_day": 999, "sms": True},
+}
+
+# Map Ko-fi tier names to our internal keys
+TIER_MAP = {
+    "monthly": "monthly",
+    "quarterly": "quarterly",
+    "annual": "annual",
+    "Monthly": "monthly",
+    "Quarterly": "quarterly",
+    "Annual": "annual",
 }
 
 
@@ -40,11 +50,11 @@ def scan_market() -> dict:
         "top_picks": [],
         "sector_rotation": {},
     }
-    
+
     # Try to use existing scan code
     twse_dir = Path(__file__).parent.parent.parent / "twse-surge-stocks-dna"
     scan_script = twse_dir / "code" / "ci_scan.py"
-    
+
     if scan_script.exists():
         try:
             r = subprocess.run(
@@ -60,74 +70,72 @@ def scan_market() -> dict:
                 result["sector_rotation"] = scan_data.get("sectors", {})
         except Exception as e:
             result["error"] = str(e)
-            # Fallback to mock data for demo
             result["top_picks"] = _mock_signals()
     else:
         result["top_picks"] = _mock_signals()
-    
+
     return result
 
 
 def _mock_signals() -> list[dict]:
     """Mock signals for demo/preview."""
     return [
-        {"ticker": "2330", "name": "台積電", "signal": "BUY", "score": 92,
-         "reason": "MACD黃金交叉+ADX>25+外資連續買超5日"},
-        {"ticker": "2317", "name": "鴻海", "signal": "BUY", "score": 85,
-         "reason": "突破月線+成交量放大2倍+KD黃金交叉"},
-        {"ticker": "2454", "name": "聯發科", "signal": "HOLD", "score": 65,
-         "reason": "RSI中性區間+外資買賣互見"},
-        {"ticker": "2412", "name": "中華電", "signal": "SELL", "score": 30,
-         "reason": "MACD死亡交叉+投信連續賣超"},
-        {"ticker": "2002", "name": "中鋼", "signal": "BUY", "score": 78,
-         "reason": "低檔十字線+外資轉買+本益比偏低"},
+        {"ticker": "2330", "name": "TSMC", "signal": "BUY", "score": 92,
+         "reason": "MACD golden cross + ADX>25 + Foreign buy 5d"},
+        {"ticker": "2317", "name": "Hon Hai", "signal": "BUY", "score": 85,
+         "reason": "Above MA20 + Volume x2 + KD golden cross"},
+        {"ticker": "2454", "name": "MediaTek", "signal": "HOLD", "score": 65,
+         "reason": "RSI neutral + Mixed foreign flow"},
+        {"ticker": "2412", "name": "Chunghwa Telecom", "signal": "SELL", "score": 30,
+         "reason": "MACD death cross + Institutional selling"},
+        {"ticker": "2002", "name": "China Steel", "signal": "BUY", "score": 78,
+         "reason": "Low doji + Foreign turning + Low P/E"},
     ]
 
 
-def format_signal_email(signals: dict, customer_name: str = "客戶") -> str:
+def format_signal_email(signals: dict, customer_name: str = "Subscriber") -> str:
     """Format scan results as an email."""
     date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     picks = signals.get("top_picks", [])
-    
+
     if not picks:
-        return f"<h2>📊 {date_str} 掃描結果</h2><p>今日無明顯訊號</p>"
-    
-    lines = [f"<h2>📊 {date_str} 台股掃描報告</h2>"]
-    lines.append(f"<p>親愛的 {customer_name}，以下是今日掃描結果：</p>")
+        return f"<h2>📊 {date_str} Scan Results</h2><p>No significant signals today.</p>"
+
+    lines = [f"<h2>📊 {date_str} TWSE Scan Report</h2>"]
+    lines.append(f"<p>Dear {customer_name}, here are today's scan results:</p>")
     lines.append("<table border='1' cellpadding='8' style='border-collapse:collapse;width:100%;'>")
     lines.append("<tr style='background:#2563eb;color:white;'>"
-                 "<th>股票</th><th>訊號</th><th>評分</th><th>理由</th></tr>")
-    
+                 "<th>Stock</th><th>Signal</th><th>Score</th><th>Reason</th></tr>")
+
     for p in picks:
         signal_color = {"BUY": "green", "SELL": "red", "HOLD": "orange"}.get(p["signal"], "gray")
         lines.append(f"<tr><td><b>{p['ticker']}</b> {p['name']}</td>"
                      f"<td style='color:{signal_color};font-weight:bold;'>{p['signal']}</td>"
                      f"<td>{p['score']}</td><td>{p['reason']}</td></tr>")
-    
+
     lines.append("</table>")
-    
-    # Market context
+
     market = signals.get("market_signals", [])
     if market:
-        lines.append("<h3>📈 大盤指標</h3><ul>")
+        lines.append("<h3>📈 Market Indicators</h3><ul>")
         for m in market[:5]:
             lines.append(f"<li>{m}</li>")
         lines.append("</ul>")
-    
+
     lines.append("<hr><p style='color:gray;font-size:0.8em;'>"
-                 "TWSE Premium · 本報告僅供參考，投資盈虧自負</p>")
-    
+                 "TWSE Premium · Not financial advice. Trade at your own risk.</p>")
+
     return "".join(lines)
 
 
 def send_email(to_email: str, subject: str, html: str, smtp_config: dict):
-    """Send email via SMTP (using free SendGrid/Gmail)."""
+    """Send email via SMTP (using free Gmail/SendGrid)."""
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = smtp_config.get("from", "premium@hermes-invest.com")
     msg["To"] = to_email
     msg.attach(MIMEText(html, "html"))
-    
+
     try:
         with smtplib.SMTP(smtp_config["host"], smtp_config.get("port", 587)) as server:
             server.starttls()
@@ -150,12 +158,66 @@ def save_signal_report(signals: dict):
         "sells": sum(1 for s in signals.get("top_picks", []) if s.get("signal") == "SELL"),
         "top_picks": signals.get("top_picks", []),
     }
-    
+
     logs = []
     if SIGNAL_LOG.exists():
         logs = json.loads(SIGNAL_LOG.read_text())
     logs.append(report)
     SIGNAL_LOG.write_text(json.dumps(logs, indent=2, ensure_ascii=False))
+
+
+def _register_customer(email: str, tier_name: str):
+    """Register a new customer and log the income."""
+    tier_key = TIER_MAP.get(tier_name, "monthly")
+    tier_info = TIERS.get(tier_key, TIERS["monthly"])
+    customers = json.loads(CUSTOMERS_FILE.read_text()) if CUSTOMERS_FILE.exists() else []
+
+    # Avoid duplicate registration
+    for c in customers:
+        if c["email"] == email and c.get("status") == "active":
+            print(f"⚠️ Customer already active: {email}")
+            return
+
+    customer = {
+        "id": f"twse_{len(customers)+1}",
+        "email": email,
+        "tier": tier_key,
+        "status": "active",
+        "created_at": datetime.now().isoformat(),
+        "price": tier_info["price"],
+    }
+    customers.append(customer)
+    CUSTOMERS_FILE.write_text(json.dumps(customers, indent=2, ensure_ascii=False))
+
+    # Log income
+    income = json.loads(INCOME_LOG.read_text()) if INCOME_LOG.exists() else []
+    income.append({
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "amount": tier_info["price"],
+        "source": f"TWSE Premium {tier_key}",
+        "customer": email,
+    })
+    INCOME_LOG.write_text(json.dumps(income, indent=2, ensure_ascii=False))
+
+    print(f"✅ Registered: {email} on {tier_key} (${tier_info['price']})")
+
+
+def _cancel_customer(email: str):
+    """Cancel a customer's subscription."""
+    customers = json.loads(CUSTOMERS_FILE.read_text()) if CUSTOMERS_FILE.exists() else []
+    found = False
+    for c in customers:
+        if c["email"] == email:
+            c["status"] = "cancelled"
+            c["cancelled_at"] = datetime.now().isoformat()
+            found = True
+            break
+
+    if found:
+        CUSTOMERS_FILE.write_text(json.dumps(customers, indent=2, ensure_ascii=False))
+        print(f"✅ Cancelled: {email}")
+    else:
+        print(f"⚠️ Customer not found: {email}")
 
 
 def generate_landing_page() -> str:
@@ -167,19 +229,19 @@ def generate_landing_page() -> str:
             <h3>{tier['name']}</h3>
             <p class="price">${tier['price']}</p>
             <ul>
-                <li>📊 每日 {tier['signals_per_day']} 次掃描</li>
-                <li>📧 Email 通知</li>
-                <li>{"📱 SMS 簡訊通知" if tier['sms'] else "❌ 無 SMS"}</li>
-                <li>📈 大盤指標分析</li>
-                <li>🔍 個股評分系統</li>
+                <li>📊 {tier['signals_per_day']} scans/day</li>
+                <li>📧 Email notification</li>
+                <li>{"📱 SMS alerts" if tier['sms'] else "❌ No SMS"}</li>
+                <li>📈 Market analysis</li>
+                <li>🔍 Stock scoring system</li>
             </ul>
-            <a href="https://buy.stripe.com/test_XXX_{key}" class="cta-btn">立即訂閱</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
         </div>"""
-    
+
     return f"""<!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TWSE Premium — 台股即時訊號</title>
+<title>TWSE Premium — Taiwan Stock Signals</title>
 <style>
     * {{ margin:0; padding:0; box-sizing:border-box; }}
     body {{ font-family:-apple-system,sans-serif; background:#0a0a1a; color:#e2e8f0; }}
@@ -202,20 +264,20 @@ def generate_landing_page() -> str:
     <div class="container">
         <header>
             <h1>📊 TWSE Premium</h1>
-            <p style="color:#94a3b8;font-size:1.2rem;">台股自動掃描 · 即時訊號 · 每日通知</p>
+            <p style="color:#94a3b8;font-size:1.2rem;">AI stock scanning · Real-time signals · Daily alerts</p>
         </header>
-        
+
         <div class="preview">
-            <h2>🔍 今日掃描結果預覽</h2>
-            <div id="signals">載入中...</div>
+            <h2>🔍 Today's Scan Preview</h2>
+            <div id="signals">Loading...</div>
         </div>
-        
-        <h2 style="text-align:center;margin:30px 0;">📋 方案選擇</h2>
+
+        <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
         <div class="pricing-grid">{pricing_cards}</div>
-        
+
         <footer>
-            <p>TWSE Premium by slashman413 · 數據來源：公開市場資訊</p>
-            <p>⚠️ 投資有風險，本服務僅供參考</p>
+            <p>TWSE Premium by slashman413 · Data source: public market info</p>
+            <p>⚠️ Trading carries risk. This service is for reference only.</p>
         </footer>
     </div>
     <script>
@@ -226,7 +288,7 @@ def generate_landing_page() -> str:
                 '<div class="signal ' + (s.signal==='SELL'?'sell':'') + '">' +
                 '<b>' + s.ticker + ' ' + s.name + '</b> ' +
                 '<span style="color:' + (s.signal==='BUY'?'#22c55e':'#ef4444') + '">' + s.signal + '</span> ' +
-                '得分: ' + s.score + '<br><small>' + s.reason + '</small></div>'
+                'Score: ' + s.score + '<br><small>' + s.reason + '</small></div>'
             ).join('');
         }});
     </script>
@@ -236,19 +298,19 @@ def generate_landing_page() -> str:
 
 def main():
     ensure_data()
-    
+
     cmd = sys.argv[1] if len(sys.argv) > 1 else "scan"
-    
+
     if cmd == "scan":
         signals = scan_market()
         save_signal_report(signals)
         print(f"✅ Scan complete: {len(signals.get('top_picks', []))} signals")
-        
+
         # Notify customers
         customers = []
         if CUSTOMERS_FILE.exists():
             customers = json.loads(CUSTOMERS_FILE.read_text())
-        
+
         smtp = {
             "host": os.environ.get("SMTP_HOST", "smtp.gmail.com"),
             "port": int(os.environ.get("SMTP_PORT", "587")),
@@ -256,52 +318,73 @@ def main():
             "password": os.environ.get("SMTP_PASSWORD", ""),
             "from": os.environ.get("SMTP_FROM", "premium@hermes-invest.com"),
         }
-        
+
         notified = 0
         for c in customers:
             if c.get("status") == "active":
                 email = c["email"]
-                html = format_signal_email(signals, c.get("name", "客戶"))
-                if send_email(email, f"📊 TWSE Premium {datetime.now().strftime('%m/%d')} 掃描報告", html, smtp):
+                html = format_signal_email(signals, c.get("name", "Subscriber"))
+                if send_email(email, f"📊 TWSE Premium {datetime.now().strftime('%m/%d')} Scan Report", html, smtp):
                     notified += 1
-        
+
         print(f"📧 Notified {notified} customers")
-        
+
         # Generate pages
         docs_dir = BASE_DIR / "docs"
         docs_dir.mkdir(exist_ok=True)
         (docs_dir / "index.html").write_text(generate_landing_page(), encoding="utf-8")
         print("✅ Landing page generated")
-    
+
     elif cmd == "register":
         email = sys.argv[3]
         tier = sys.argv[5] if len(sys.argv) > 5 else "monthly"
-        customers = json.loads(CUSTOMERS_FILE.read_text()) if CUSTOMERS_FILE.exists() else []
-        customer = {
-            "id": f"twse_{len(customers)+1}",
-            "email": email,
-            "tier": tier,
-            "status": "active",
-            "created_at": datetime.now().isoformat(),
-            "price": TIERS[tier]["price"],
-        }
-        customers.append(customer)
-        CUSTOMERS_FILE.write_text(json.dumps(customers, indent=2, ensure_ascii=False))
+        _register_customer(email, tier)
+
+    elif cmd == "webhook":
+        """Handle Ko-fi webhook payload via GitHub repository_dispatch.
         
-        # Log income
-        income = json.loads(INCOME_LOG.read_text()) if INCOME_LOG.exists() else []
-        income.append({"date": datetime.now().strftime("%Y-%m-%d"), "amount": TIERS[tier]["price"],
-                       "source": f"TWSE Premium {tier}", "customer": email})
-        INCOME_LOG.write_text(json.dumps(income, indent=2, ensure_ascii=False))
-        
-        print(f"✅ Registered: {email} on {tier} (${TIERS[tier]['price']})")
-    
+        Triggered by .github/workflows/webhook.yml which pipes 
+        the client_payload JSON to stdin.
+        """
+        payload_str = sys.stdin.read()
+        try:
+            payload = json.loads(payload_str)
+        except json.JSONDecodeError:
+            print("⚠️ Invalid JSON payload from webhook")
+            return
+
+        event = payload.get("event_type", "")
+        data = payload.get("client_payload", {})
+
+        if event == "kofi_subscription" or event == "kofi_shop_order":
+            email = data.get("email", "")
+            tier = data.get("tier", "monthly")
+            if email:
+                _register_customer(email, tier)
+            else:
+                print("⚠️ Webhook received but no email in payload")
+
+        elif event == "kofi_cancellation" or event == "kofi_refund":
+            email = data.get("email", "")
+            if email:
+                _cancel_customer(email)
+
+        else:
+            print(f"⚠️ Unknown event type: {event}")
+
+    elif cmd == "cancel":
+        if len(sys.argv) >= 3:
+            _cancel_customer(sys.argv[3])
+        else:
+            print("Usage: python premium.py cancel <email>")
+
     elif cmd == "status":
         customers = json.loads(CUSTOMERS_FILE.read_text()) if CUSTOMERS_FILE.exists() else []
         income = json.loads(INCOME_LOG.read_text()) if INCOME_LOG.exists() else []
         total = sum(i.get("amount", 0) for i in income)
         print(f"📊 TWSE Premium Status:")
         print(f"  Customers: {len(customers)}")
+        print(f"  Active: {sum(1 for c in customers if c.get('status') == 'active')}")
         print(f"  Total revenue: ${total:.2f}")
         print(f"  Signals generated: {len(json.loads(SIGNAL_LOG.read_text())) if SIGNAL_LOG.exists() else 0}")
 
