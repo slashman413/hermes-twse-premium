@@ -226,5 +226,49 @@
         "reason": "Low doji + Foreign turning + Low P/E"
       }
     ]
+  },
+  {
+    "date": "2026-07-01",
+    "time": "01:59",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "top_picks": [
+      {
+        "ticker": "2330",
+        "name": "TSMC",
+        "signal": "BUY",
+        "score": 92,
+        "reason": "MACD golden cross + ADX>25 + Foreign buy 5d"
+      },
+      {
+        "ticker": "2317",
+        "name": "Hon Hai",
+        "signal": "BUY",
+        "score": 85,
+        "reason": "Above MA20 + Volume x2 + KD golden cross"
+      },
+      {
+        "ticker": "2454",
+        "name": "MediaTek",
+        "signal": "HOLD",
+        "score": 65,
+        "reason": "RSI neutral + Mixed foreign flow"
+      },
+      {
+        "ticker": "2412",
+        "name": "Chunghwa Telecom",
+        "signal": "SELL",
+        "score": 30,
+        "reason": "MACD death cross + Institutional selling"
+      },
+      {
+        "ticker": "2002",
+        "name": "China Steel",
+        "signal": "BUY",
+        "score": 78,
+        "reason": "Low doji + Foreign turning + Low P/E"
+      }
+    ]
   }
 ]
