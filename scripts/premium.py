@@ -269,20 +269,36 @@ def _cancel_customer(email: str):
 
 def generate_landing_page() -> str:
     """Generate landing page HTML with pricing."""
+    RECOMMENDED = "annual"
+    PER_MONTH = {
+        "monthly": "$49 / 月",
+        "quarterly": "≈ $33 / 月 · 每季扣款",
+        "annual": "≈ $25 / 月 · 年繳",
+        "lifetime": "一次付清 · 終身使用",
+    }
+    SAVINGS = {"quarterly": "省 33%", "annual": "省 49%", "lifetime": ""}
     pricing_cards = ""
     for key, tier in TIERS.items():
+        rec = " recommended" if key == RECOMMENDED else ""
+        badge = '<div class="badge">★ 最佳方案</div>' if key == RECOMMENDED else ""
+        permo = PER_MONTH.get(key, "")
+        save = SAVINGS.get(key, "")
+        save_html = f' · <span style="color:#22c55e">{save}</span>' if save else ""
         pricing_cards += f"""
-        <div class="pricing-card">
+        <div class="pricing-card{rec}">
+            {badge}
             <h3>{tier['name']}</h3>
             <p class="price">${tier['price']}</p>
+            <p class="per-month">{permo}{save_html}</p>
             <ul>
-                <li>📊 {tier['signals_per_day']} scans/day</li>
-                <li>📧 Email notification</li>
-                <li>{"📱 SMS alerts" if tier['sms'] else "❌ No SMS"}</li>
-                <li>📈 Market analysis</li>
-                <li>🔍 Stock scoring system</li>
+                <li>📊 每日 {tier['signals_per_day']} 檔精選訊號（含進出場）</li>
+                <li>📧 Email 即時通知</li>
+                <li>{"📱 SMS 簡訊快訊" if tier['sms'] else "—"}</li>
+                <li>📈 大盤 + 類股輪動分析</li>
+                <li>🔍 9 步量化評分</li>
             </ul>
-            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">Subscribe</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn">立即開始收訊號 →</a>
+            <p class="cancel">隨時可取消</p>
         </div>"""
 
     return f"""<!DOCTYPE html>
@@ -296,8 +312,12 @@ def generate_landing_page() -> str:
     header {{ text-align:center; padding:50px 0; }}
     h1 {{ font-size:2.5rem; background:linear-gradient(135deg,#22c55e,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }}
     .pricing-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }}
-    .pricing-card {{ background:#1e293b; border-radius:16px; padding:25px; }}
+    .pricing-card {{ background:#1e293b; border-radius:16px; padding:25px; position:relative; }}
+    .pricing-card.recommended {{ border:2px solid #22c55e; box-shadow:0 0 28px rgba(34,197,94,.28); }}
+    .badge {{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:#22c55e; color:#03210f; font-size:.75rem; font-weight:800; padding:4px 14px; border-radius:999px; white-space:nowrap; }}
     .pricing-card .price {{ font-size:2.5rem; font-weight:bold; color:#22c55e; }}
+    .per-month {{ color:#cbd5e1; font-size:.9rem; margin:2px 0 10px; }}
+    .cancel {{ text-align:center; color:#64748b; font-size:.78rem; margin-top:10px; }}
     .pricing-card ul {{ list-style:none; margin:15px 0; }}
     .pricing-card li {{ padding:5px 0; color:#94a3b8; }}
     .cta-btn {{ display:block; text-align:center; padding:12px; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border-radius:10px; text-decoration:none; font-weight:bold; }}
@@ -311,14 +331,16 @@ def generate_landing_page() -> str:
     <div class="container">
         <header>
             <h1>📊 TWSE Premium</h1>
-            <p style="color:#94a3b8;font-size:1.2rem;">AI stock scanning · Real-time signals · Daily alerts</p>
+            <p style="color:#e2e8f0;font-size:1.3rem;max-width:640px;margin:12px auto 0;">每個交易日早上，直接收到「今天該關注的台股」——附方向、評分與進出場價位。</p>
+            <p style="color:#64748b;font-size:1rem;margin-top:8px;">9 步量化策略 · 2004–2026 全市場回測驗證 · 隨時可取消</p>
         </header>
 
         <div class="preview">
-            <h2>🔍 Today's Scan</h2>
+            <h2>🔍 今日掃描結果</h2>
             <p id="scan-summary" style="color:#94a3b8;">Loading…</p>
             <div id="signals"></div>
-            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:320px;">🔓 Unlock today's signals — from $49/mo</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:340px;">🔓 解鎖今日訊號 — 每月 $49 起</a>
+            <p style="text-align:center;color:#64748b;font-size:.85rem;margin-top:10px;">解鎖後每交易日 09:00 前送達 · 隨時可取消 · 非投資建議</p>
         </div>
 
         <div class="preview">
