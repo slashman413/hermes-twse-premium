@@ -147,16 +147,56 @@ def send_email(to_email: str, subject: str, html: str, smtp_config: dict):
         return False
 
 
-def save_signal_report(signals: dict):
-    """Save signal report to file (for GitHub Pages display)."""
-    date_str = datetime.now().strftime("%Y-%m-%d")
+def _smtp_from_env() -> dict:
+    return {
+        "host": os.environ.get("SMTP_HOST", "smtp.gmail.com"),
+        "port": int(os.environ.get("SMTP_PORT", "587")),
+        "user": os.environ.get("SMTP_USER", ""),
+        "password": os.environ.get("SMTP_PASSWORD", ""),
+        "from": os.environ.get("SMTP_FROM", "premium@hermes-invest.com"),
+    }
+
+
+def send_welcome_email(email: str, tier_key: str):
+    """Confirm access the moment a subscriber pays, so they don't wait for the next scan."""
+    smtp = _smtp_from_env()
+    if not smtp["user"] or not smtp["password"]:
+        print("ℹ️ SMTP not configured — skipping welcome email")
+        return
+    tier = TIERS.get(tier_key, TIERS["monthly"])
+    html = (
+        f"<h2>✅ Welcome to TWSE Premium</h2>"
+        f"<p>Your <b>{tier['name']}</b> subscription is active. "
+        f"You'll receive up to <b>{tier['signals_per_day']} signal(s) per scan</b>, "
+        f"on weekdays around 09:00 and 13:30 Taipei time.</p>"
+        f"<p>Each report includes the ticker, direction, score, and the reasoning behind it. "
+        f"Your first report arrives at the next scan.</p>"
+        f"<hr><p style='color:gray;font-size:0.8em;'>TWSE Premium · Not financial advice. "
+        f"Reply to this email to cancel anytime.</p>"
+    )
+    if send_email(email, "✅ Welcome to TWSE Premium — access active", html, smtp):
+        print(f"📧 Welcome email sent to {email}")
+
+
+def save_public_report(signals: dict):
+    """Save a PUBLIC teaser for the free GitHub Pages preview.
+
+    The paid product IS the actionable detail (ticker, direction, score, reason),
+    so it must never be committed to a public repo. We publish only counts and a
+    locked/masked teaser here; the full picks go to paying subscribers by email.
+    """
+    picks = signals.get("top_picks", [])
     report = {
-        "date": date_str,
+        "date": datetime.now().strftime("%Y-%m-%d"),
         "time": datetime.now().strftime("%H:%M"),
-        "total_signals": len(signals.get("top_picks", [])),
-        "buys": sum(1 for s in signals.get("top_picks", []) if s.get("signal") == "BUY"),
-        "sells": sum(1 for s in signals.get("top_picks", []) if s.get("signal") == "SELL"),
-        "top_picks": signals.get("top_picks", []),
+        "total_signals": len(picks),
+        "buys": sum(1 for s in picks if s.get("signal") == "BUY"),
+        "sells": sum(1 for s in picks if s.get("signal") == "SELL"),
+        # Masked teaser: hint at coverage without leaking the actionable signal.
+        "locked_preview": [
+            {"ticker_masked": (p.get("ticker", "0000")[0] + "***"), "locked": True}
+            for p in picks
+        ],
     }
 
     logs = []
@@ -166,8 +206,10 @@ def save_signal_report(signals: dict):
     SIGNAL_LOG.write_text(json.dumps(logs, indent=2, ensure_ascii=False))
 
 
-def _register_customer(email: str, tier_name: str):
-    """Register a new customer and log the income."""
+def _register_customer(email: str, tier_name: str, verified: bool = False):
+    """Register a customer. Only a *verified* paid event (Ko-fi webhook) books revenue;
+    manual/test registrations grant access but are not counted as income, so the
+    revenue numbers can never be inflated by comps or tests."""
     tier_key = TIER_MAP.get(tier_name, "monthly")
     tier_info = TIERS.get(tier_key, TIERS["monthly"])
     customers = json.loads(CUSTOMERS_FILE.read_text()) if CUSTOMERS_FILE.exists() else []
@@ -185,21 +227,26 @@ def _register_customer(email: str, tier_name: str):
         "status": "active",
         "created_at": datetime.now().isoformat(),
         "price": tier_info["price"],
+        "verified": verified,
     }
     customers.append(customer)
     CUSTOMERS_FILE.write_text(json.dumps(customers, indent=2, ensure_ascii=False))
 
-    # Log income
-    income = json.loads(INCOME_LOG.read_text()) if INCOME_LOG.exists() else []
-    income.append({
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "amount": tier_info["price"],
-        "source": f"TWSE Premium {tier_key}",
-        "customer": email,
-    })
-    INCOME_LOG.write_text(json.dumps(income, indent=2, ensure_ascii=False))
+    # Only log income for verified paid events — never for manual/test registrations.
+    if verified:
+        income = json.loads(INCOME_LOG.read_text()) if INCOME_LOG.exists() else []
+        income.append({
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "amount": tier_info["price"],
+            "source": f"TWSE Premium {tier_key}",
+            "customer": email,
+            "verified": True,
+        })
+        INCOME_LOG.write_text(json.dumps(income, indent=2, ensure_ascii=False))
 
-    print(f"✅ Registered: {email} on {tier_key} (${tier_info['price']})")
+    send_welcome_email(email, tier_key)
+    tag = "PAID" if verified else "unverified (no revenue booked)"
+    print(f"✅ Registered: {email} on {tier_key} (${tier_info['price']}) — {tag}")
 
 
 def _cancel_customer(email: str):
@@ -268,8 +315,19 @@ def generate_landing_page() -> str:
         </header>
 
         <div class="preview">
-            <h2>🔍 Today's Scan Preview</h2>
-            <div id="signals">Loading...</div>
+            <h2>🔍 Today's Scan</h2>
+            <p id="scan-summary" style="color:#94a3b8;">Loading…</p>
+            <div id="signals"></div>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:320px;">🔓 Unlock today's signals — from $49/mo</a>
+        </div>
+
+        <div class="preview">
+            <h2>📈 Why trust these signals?</h2>
+            <p style="color:#94a3b8;margin:10px 0;">
+                Every signal comes from the same 9-step quant strategy, back-tested across
+                <b>2004–2026</b> on the full Taiwan market. The historical results are public — verify before you subscribe.
+            </p>
+            <a href="https://slashman413.github.io/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
         </div>
 
         <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
@@ -277,19 +335,24 @@ def generate_landing_page() -> str:
 
         <footer>
             <p>TWSE Premium by slashman413 · Data source: public market info</p>
-            <p>⚠️ Trading carries risk. This service is for reference only.</p>
+            <p>⚠️ Trading carries risk. Not financial advice — for reference only.</p>
         </footer>
     </div>
     <script>
         fetch('signals.json').then(r=>r.json()).then(d=>{{
             const last = d[d.length-1];
             if(!last) return;
-            document.getElementById('signals').innerHTML = last.top_picks.map(s =>
-                '<div class="signal ' + (s.signal==='SELL'?'sell':'') + '">' +
-                '<b>' + s.ticker + ' ' + s.name + '</b> ' +
-                '<span style="color:' + (s.signal==='BUY'?'#22c55e':'#ef4444') + '">' + s.signal + '</span> ' +
-                'Score: ' + s.score + '<br><small>' + s.reason + '</small></div>'
-            ).join('');
+            document.getElementById('scan-summary').innerHTML =
+                '📅 ' + last.date + ' · <b>' + (last.total_signals||0) + '</b> signals today · ' +
+                '<span style="color:#22c55e">' + (last.buys||0) + ' BUY</span> / ' +
+                '<span style="color:#ef4444">' + (last.sells||0) + ' SELL</span>';
+            const locked = last.locked_preview || [];
+            document.getElementById('signals').innerHTML = locked.length
+                ? locked.map(s =>
+                    '<div class="signal">🔒 <b>' + s.ticker_masked +
+                    '</b> — ticker, direction, score &amp; entry/exit are for subscribers</div>'
+                  ).join('')
+                : '<div class="signal">No signals today.</div>';
         }});
     </script>
 </body>
@@ -303,7 +366,7 @@ def main():
 
     if cmd == "scan":
         signals = scan_market()
-        save_signal_report(signals)
+        save_public_report(signals)
         print(f"✅ Scan complete: {len(signals.get('top_picks', []))} signals")
 
         # Notify customers
@@ -323,7 +386,11 @@ def main():
         for c in customers:
             if c.get("status") == "active":
                 email = c["email"]
-                html = format_signal_email(signals, c.get("name", "Subscriber"))
+                # Deliver the number of signals the customer's tier is entitled to.
+                tier_key = c.get("tier", "monthly")
+                limit = TIERS.get(tier_key, TIERS["monthly"])["signals_per_day"]
+                tier_signals = {**signals, "top_picks": signals.get("top_picks", [])[:limit]}
+                html = format_signal_email(tier_signals, c.get("name", "Subscriber"))
                 if send_email(email, f"📊 TWSE Premium {datetime.now().strftime('%m/%d')} Scan Report", html, smtp):
                     notified += 1
 
@@ -365,12 +432,13 @@ def main():
             return
 
         if event in ("kofi_subscription", "kofi_shop_order"):
-            _register_customer(email, tier)
+            # A real Ko-fi payment event → verified revenue.
+            _register_customer(email, tier, verified=True)
         elif event in ("kofi_cancellation", "kofi_refund"):
             _cancel_customer(email)
         else:
-            # Unknown event, still try to register if we have an email
-            _register_customer(email, tier)
+            # Unknown event: grant access but do not book revenue (unverified).
+            _register_customer(email, tier, verified=False)
 
     elif cmd == "cancel":
         if len(sys.argv) >= 3:

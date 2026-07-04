@@ -28,8 +28,19 @@
         </header>
 
         <div class="preview">
-            <h2>🔍 Today's Scan Preview</h2>
-            <div id="signals">Loading...</div>
+            <h2>🔍 Today's Scan</h2>
+            <p id="scan-summary" style="color:#94a3b8;">Loading…</p>
+            <div id="signals"></div>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:320px;">🔓 Unlock today's signals — from $49/mo</a>
+        </div>
+
+        <div class="preview">
+            <h2>📈 Why trust these signals?</h2>
+            <p style="color:#94a3b8;margin:10px 0;">
+                Every signal comes from the same 9-step quant strategy, back-tested across
+                <b>2004–2026</b> on the full Taiwan market. The historical results are public — verify before you subscribe.
+            </p>
+            <a href="https://slashman413.github.io/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
         </div>
 
         <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
@@ -85,19 +96,24 @@
 
         <footer>
             <p>TWSE Premium by slashman413 · Data source: public market info</p>
-            <p>⚠️ Trading carries risk. This service is for reference only.</p>
+            <p>⚠️ Trading carries risk. Not financial advice — for reference only.</p>
         </footer>
     </div>
     <script>
         fetch('signals.json').then(r=>r.json()).then(d=>{
             const last = d[d.length-1];
             if(!last) return;
-            document.getElementById('signals').innerHTML = last.top_picks.map(s =>
-                '<div class="signal ' + (s.signal==='SELL'?'sell':'') + '">' +
-                '<b>' + s.ticker + ' ' + s.name + '</b> ' +
-                '<span style="color:' + (s.signal==='BUY'?'#22c55e':'#ef4444') + '">' + s.signal + '</span> ' +
-                'Score: ' + s.score + '<br><small>' + s.reason + '</small></div>'
-            ).join('');
+            document.getElementById('scan-summary').innerHTML =
+                '📅 ' + last.date + ' · <b>' + (last.total_signals||0) + '</b> signals today · ' +
+                '<span style="color:#22c55e">' + (last.buys||0) + ' BUY</span> / ' +
+                '<span style="color:#ef4444">' + (last.sells||0) + ' SELL</span>';
+            const locked = last.locked_preview || [];
+            document.getElementById('signals').innerHTML = locked.length
+                ? locked.map(s =>
+                    '<div class="signal">🔒 <b>' + s.ticker_masked +
+                    '</b> — ticker, direction, score &amp; entry/exit are for subscribers</div>'
+                  ).join('')
+                : '<div class="signal">No signals today.</div>';
         });
     </script>
 </body>
