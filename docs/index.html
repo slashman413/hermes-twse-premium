@@ -142,5 +142,21 @@
                 : '<div class="signal">No signals today.</div>';
         });
     </script>
+    <script>
+        // Funnel instrumentation: fire GA4 begin_checkout when a paywall CTA is clicked.
+        // Lets the pageview -> checkout step in hermes-pro's funnel table be measured.
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('a.cta-btn');
+            if (!a) return;
+            var href = a.getAttribute('href') || '';
+            if (/ko-?fi\.com|gumroad\.com|lemonsqueezy\.com/i.test(href) && typeof gtag === 'function') {
+                gtag('event', 'begin_checkout', {
+                    product: 'twse-premium',
+                    cta_text: (a.textContent || '').trim().slice(0, 60),
+                    destination: href
+                });
+            }
+        });
+    </script>
 </body>
 </html>
