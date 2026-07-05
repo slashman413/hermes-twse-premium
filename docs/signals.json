@@ -1,0 +1,358 @@
+[
+  {
+    "date": "2026-06-29",
+    "time": "13:51",
+    "total_signals": 0,
+    "buys": 0,
+    "sells": 0,
+    "locked_preview": []
+  },
+  {
+    "date": "2026-06-29",
+    "time": "13:52",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-06-29",
+    "time": "05:54",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-06-29",
+    "time": "10:09",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-06-30",
+    "time": "05:03",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-06-30",
+    "time": "08:43",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "time": "01:59",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "time": "05:21",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "time": "08:59",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-02",
+    "time": "04:57",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-02",
+    "time": "08:29",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-03",
+    "time": "04:41",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "date": "2026-07-03",
+    "time": "08:36",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
+  }
+]

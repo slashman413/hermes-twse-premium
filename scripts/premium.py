@@ -289,6 +289,8 @@ def generate_landing_page() -> str:
         permo = PER_MONTH.get(key, "")
         save = SAVINGS.get(key, "")
         save_html = f' · <span style="color:#22c55e">{save}</span>' if save else ""
+        spd = tier['signals_per_day']
+        sig_phrase = "每日全部精選訊號（含進出場）" if spd >= 99 else f"每日 {spd} 檔精選訊號（含進出場）"
         pricing_cards += f"""
         <div class="pricing-card{rec}">
             {badge}
@@ -296,7 +298,7 @@ def generate_landing_page() -> str:
             <p class="price">${tier['price']}</p>
             <p class="per-month">{permo}{save_html}</p>
             <ul>
-                <li>📊 每日 {tier['signals_per_day']} 檔精選訊號（含進出場）</li>
+                <li>📊 {sig_phrase}</li>
                 <li>📧 Email 即時通知</li>
                 <li>{"📱 SMS 簡訊快訊" if tier['sms'] else "—"}</li>
                 <li>📈 大盤 + 類股輪動分析</li>
@@ -306,10 +308,41 @@ def generate_landing_page() -> str:
             <p class="cancel">隨時可取消</p>
         </div>"""
 
+    # SEO + GA4 head (plain strings so literal { } need no f-string escaping).
+    seo_head = """<title>台股量化選股訊號｜大飆股 DNA 每日掃描 $49/月</title>
+<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 回測驗證的 9 步策略。今日進出場訊號 + 名單，$49/月，7 天試用。">
+<link rel="canonical" href="https://slashmantools.us/hermes-twse-premium/" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="zh_TW" />
+<meta property="og:url" content="https://slashmantools.us/hermes-twse-premium/" />
+<meta property="og:title" content="大飆股 DNA — 台股每日量化選股訊號" />
+<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 回測驗證的 9 步策略。今日進出場訊號 + 名單，$49/月，7 天試用。" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 回測驗證。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"49.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MY95FHB8JG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MY95FHB8JG');
+</script>"""
+
+    extra_script = """<script>
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.cta-btn');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/ko-?fi\\.com|gumroad\\.com|lemonsqueezy\\.com/i.test(href) && typeof gtag === 'function') {
+      gtag('event', 'begin_checkout', { product: 'twse-premium', cta_text: (a.textContent || '').trim().slice(0, 60), destination: href });
+    }
+  });
+</script>"""
+
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant-TW">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TWSE Premium — Taiwan Stock Signals</title>
+{seo_head}
 <style>
     * {{ margin:0; padding:0; box-sizing:border-box; }}
     body {{ font-family:-apple-system,sans-serif; background:#0a0a1a; color:#e2e8f0; }}
@@ -354,7 +387,7 @@ def generate_landing_page() -> str:
                 Every signal comes from the same 9-step quant strategy, back-tested across
                 <b>2004–2026</b> on the full Taiwan market. The historical results are public — verify before you subscribe.
             </p>
-            <a href="https://slashman413.github.io/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
+            <a href="https://slashmantools.us/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
         </div>
 
         <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
@@ -382,6 +415,7 @@ def generate_landing_page() -> str:
                 : '<div class="signal">No signals today.</div>';
         }});
     </script>
+    {extra_script}
 </body>
 </html>"""
 
@@ -427,6 +461,10 @@ def main():
         docs_dir = BASE_DIR / "docs"
         docs_dir.mkdir(exist_ok=True)
         (docs_dir / "index.html").write_text(generate_landing_page(), encoding="utf-8")
+        # Publish the (masked) signal log next to the page so its fetch('signals.json')
+        # resolves — otherwise the "today's scan" hero preview 404s and hangs on "Loading…".
+        if SIGNAL_LOG.exists():
+            (docs_dir / "signals.json").write_text(SIGNAL_LOG.read_text(encoding="utf-8"), encoding="utf-8")
         print("✅ Landing page generated")
 
     elif cmd == "register":
