@@ -164,17 +164,22 @@ def send_welcome_email(email: str, tier_key: str):
         print("ℹ️ SMTP not configured — skipping welcome email")
         return
     tier = TIERS.get(tier_key, TIERS["monthly"])
+    # Richer zh-TW welcome (see EMAILS.md, Email 1). No first-name on file → use a neutral greeting.
     html = (
-        f"<h2>✅ Welcome to TWSE Premium</h2>"
-        f"<p>Your <b>{tier['name']}</b> subscription is active. "
-        f"You'll receive up to <b>{tier['signals_per_day']} signal(s) per scan</b>, "
-        f"on weekdays around 09:00 and 13:30 Taipei time.</p>"
-        f"<p>Each report includes the ticker, direction, score, and the reasoning behind it. "
-        f"Your first report arrives at the next scan.</p>"
-        f"<hr><p style='color:gray;font-size:0.8em;'>TWSE Premium · Not financial advice. "
-        f"Reply to this email to cancel anytime.</p>"
+        f"<h2>✅ TWSE Premium 已開通</h2>"
+        f"<p>歡迎加入 <b>TWSE Premium</b>（{tier['name']} 方案）。你的訂閱已開通。</p>"
+        f"<p><b>接下來會收到什麼：</b></p>"
+        f"<ul>"
+        f"<li>每個交易日約 <b>09:00 與 13:30（台北時間）</b>，Email 送上當日精選訊號。</li>"
+        f"<li>每檔含：代號／名稱／方向（買/賣）／量化評分／進出場參考價位，以及當日大盤與類股判讀。</li>"
+        f"<li>你的方案每日最多 <b>{tier['signals_per_day']}</b> 檔訊號。</li>"
+        f"</ul>"
+        f"<p>第一份報告會在下一次掃描時送達。想隨時取消？直接回覆這封信即可。</p>"
+        f"<p>如何使用訊號、以及 2004–2026 全市場回測："
+        f"<a href='https://slashman413.github.io/twse-backtests/'>公開儀表板</a></p>"
+        f"<hr><p style='color:gray;font-size:0.8em;'>TWSE Premium · 非投資建議，投資請自負風險 · 回信即可取消。</p>"
     )
-    if send_email(email, "✅ Welcome to TWSE Premium — access active", html, smtp):
+    if send_email(email, "✅ TWSE Premium 已開通 — 你的每日訊號怎麼收", html, smtp):
         print(f"📧 Welcome email sent to {email}")
 
 
