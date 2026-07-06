@@ -317,6 +317,9 @@ def generate_landing_page() -> str:
 <meta property="og:url" content="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:title" content="大飆股 DNA — 台股每日量化選股訊號" />
 <meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 回測驗證的 9 步策略。今日進出場訊號 + 名單，$49/月，7 天試用。" />
+<meta property="og:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 回測驗證。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"49.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
 </script>
