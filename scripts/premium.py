@@ -310,18 +310,18 @@ def generate_landing_page() -> str:
 
     # SEO + GA4 head (plain strings so literal { } need no f-string escaping).
     seo_head = """<title>台股量化選股訊號｜大飆股 DNA 每日掃描 $49/月</title>
-<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 回測驗證的 9 步策略。今日進出場訊號 + 名單，$49/月，7 天試用。">
+<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月，7 天試用。">
 <link rel="canonical" href="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="zh_TW" />
 <meta property="og:url" content="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:title" content="大飆股 DNA — 台股每日量化選股訊號" />
-<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 回測驗證的 9 步策略。今日進出場訊號 + 名單，$49/月，7 天試用。" />
+<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月，7 天試用。" />
 <meta property="og:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 回測驗證。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"49.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
+{"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 全市場回測（方法公開）。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"49.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MY95FHB8JG"></script>
 <script>
@@ -373,7 +373,7 @@ def generate_landing_page() -> str:
         <header>
             <h1>📊 TWSE Premium</h1>
             <p style="color:#e2e8f0;font-size:1.3rem;max-width:640px;margin:12px auto 0;">每個交易日早上，直接收到「今天該關注的台股」——附方向、評分與進出場價位。</p>
-            <p style="color:#64748b;font-size:1rem;margin-top:8px;">9 步量化策略 · 2004–2026 全市場回測驗證 · 隨時可取消</p>
+            <p style="color:#64748b;font-size:1rem;margin-top:8px;">9 步量化策略 · 2004–2026 全市場回測（方法完全公開）· 隨時可取消</p>
         </header>
 
         <div class="preview">
@@ -388,9 +388,10 @@ def generate_landing_page() -> str:
             <h2>📈 Why trust these signals?</h2>
             <p style="color:#94a3b8;margin:10px 0;">
                 Every signal comes from the same 9-step quant strategy, back-tested across
-                <b>2004–2026</b> on the full Taiwan market. The historical results are public — verify before you subscribe.
+                <b>2004–2026</b> on the full Taiwan market. The <b>full methodology and backtest are public</b> — study the rules before you subscribe.
+                <br><span style="font-size:.85rem;color:#64748b;">Note: the latest performance figures are being re-validated after a methodology fix — treat them as illustrative, not a promise of returns.</span>
             </p>
-            <a href="https://slashmantools.us/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
+            <a href="https://slashmantools.us/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the methodology & backtests (free) →</a>
         </div>
 
         <div class="preview">
