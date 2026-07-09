@@ -408,7 +408,7 @@ def generate_landing_page() -> str:
                 </tr></thead>
                 <tbody style="color:#94a3b8;">
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">年費</td><td style="padding:8px;border-bottom:1px solid #1e293b;">NT$8 萬 – 100 萬+</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">約 NT$1.5 萬（US$49/月）</td></tr>
-                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">績效揭露</td><td style="padding:8px;border-bottom:1px solid #1e293b;">不公開，信任個人</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">2004–2026 完整回測，公開可驗證</td></tr>
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">績效揭露</td><td style="padding:8px;border-bottom:1px solid #1e293b;">不公開，信任個人</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">2004–2026 完整回測，方法與規則公開</td></tr>
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">訊號時效</td><td style="padding:8px;border-bottom:1px solid #1e293b;">分級，一般會員較慢</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">系統化，人人同時收到</td></tr>
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">選股方式</td><td style="padding:8px;border-bottom:1px solid #1e293b;">老師喊盤，主觀判斷</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">9 步規則化量化掃描</td></tr>
                     <tr><td style="padding:8px;">獲利保證</td><td style="padding:8px;">常暗示保證獲利</td><td style="padding:8px;color:#e2e8f0;">不保證獲利，僅供參考</td></tr>
