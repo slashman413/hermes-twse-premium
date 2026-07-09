@@ -393,6 +393,31 @@ def generate_landing_page() -> str:
             <a href="https://slashmantools.us/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the full backtests (free) →</a>
         </div>
 
+        <div class="preview">
+            <h2>🆚 不是投顧老師，不是發財群組</h2>
+            <p style="color:#94a3b8;margin:10px 0 18px;">
+                傳統投顧年費動輒 8 萬到上百萬，訊號分級、績效不公開，一般會員往往比大戶晚收到。
+                我們做的正好相反——<b>公開回測、系統化選股、所有訂閱者同一時間收到同一份訊號。</b>
+            </p>
+            <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:.92rem;">
+                <thead><tr style="color:#cbd5e1;text-align:left;">
+                    <th style="padding:8px;border-bottom:1px solid #334155;">項目</th>
+                    <th style="padding:8px;border-bottom:1px solid #334155;">傳統投顧老師</th>
+                    <th style="padding:8px;border-bottom:1px solid #334155;color:#22c55e;">TWSE Premium</th>
+                </tr></thead>
+                <tbody style="color:#94a3b8;">
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">年費</td><td style="padding:8px;border-bottom:1px solid #1e293b;">NT$8 萬 – 100 萬+</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">約 NT$1.5 萬（US$49/月）</td></tr>
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">績效揭露</td><td style="padding:8px;border-bottom:1px solid #1e293b;">不公開，信任個人</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">2004–2026 完整回測，公開可驗證</td></tr>
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">訊號時效</td><td style="padding:8px;border-bottom:1px solid #1e293b;">分級，一般會員較慢</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">系統化，人人同時收到</td></tr>
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">選股方式</td><td style="padding:8px;border-bottom:1px solid #1e293b;">老師喊盤，主觀判斷</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">9 步規則化量化掃描</td></tr>
+                    <tr><td style="padding:8px;">獲利保證</td><td style="padding:8px;">常暗示保證獲利</td><td style="padding:8px;color:#e2e8f0;">不保證獲利，僅供參考</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p style="color:#64748b;font-size:.82rem;margin-top:14px;">投顧費用區間引自公開的 PTT／媒體使用者經驗，各家差異大。本服務為系統化選股與回測研究，非個股投資建議。</p>
+        </div>
+
         <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
         <div class="pricing-grid">{pricing_cards}</div>
 
