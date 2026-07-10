@@ -24,9 +24,17 @@ jobs:
         run: pip install -r requirements.txt 2>/dev/null || true
 
       - name: Process webhook event
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          # Pass the (attacker-settable) Ko-fi payload via env, not inline into the shell,
+          # so a quote in the JSON can't break out of the command (injection-safe).
+          KOFI_PAYLOAD: ${{ toJSON(github.event.client_payload) }}
         run: |
-          echo '${{ toJSON(github.event.client_payload) }}' | \
-          python scripts/premium.py webhook
+          printf '%s' "$KOFI_PAYLOAD" | python scripts/premium.py webhook
 
       - name: Commit customer changes
         run: |
