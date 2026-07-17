@@ -876,5 +876,34 @@
         "locked": true
       }
     ]
+  },
+  {
+    "date": "2026-07-17",
+    "time": "04:11",
+    "total_signals": 5,
+    "buys": 3,
+    "sells": 1,
+    "locked_preview": [
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      },
+      {
+        "ticker_masked": "2***",
+        "locked": true
+      }
+    ]
   }
 ]
