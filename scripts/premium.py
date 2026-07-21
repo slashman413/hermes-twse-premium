@@ -177,7 +177,8 @@ def send_welcome_email(email: str, tier_key: str):
         f"<p>第一份報告會在下一次掃描時送達。想隨時取消？直接回覆這封信即可。</p>"
         f"<p>如何使用訊號、以及 2004–2026 全市場回測："
         f"<a href='https://slashman413.github.io/twse-backtests/'>公開儀表板</a></p>"
-        f"<hr><p style='color:gray;font-size:0.8em;'>TWSE Premium · 非投資建議，投資請自負風險 · 回信即可取消。</p>"
+        f"<hr><p style='color:gray;font-size:0.8em;'>TWSE Premium · 本服務僅供教育與資訊參考，非投資建議，亦非受金管會核准之投資顧問服務；"
+        f"所有回測為假設情境，過去或模擬績效不代表未來結果，投資請自負盈虧 · 回信即可取消。</p>"
     )
     if send_email(email, "✅ TWSE Premium 已開通 — 你的每日訊號怎麼收", html, smtp):
         print(f"📧 Welcome email sent to {email}")
@@ -274,6 +275,13 @@ def _cancel_customer(email: str):
 
 def generate_landing_page() -> str:
     """Generate landing page HTML with pricing."""
+    # Canonical FSC / securities-marketing disclaimer. Must appear PROMINENTLY
+    # near every performance/backtest claim and near the price/CTA (not footer fine print).
+    DISCLAIMER = (
+        "⚠️ 重要聲明：本服務僅供教育與資訊參考，<b>非投資建議</b>，亦<b>非受金管會核准之投資顧問服務</b>，"
+        "與台灣證券交易所（TWSE）並無任何關聯。所有回測均為<b>假設情境</b>，"
+        "過去或模擬績效<b>不代表未來結果</b>，投資有風險，請自行評估並自負盈虧。"
+    )
     RECOMMENDED = "annual"
     PER_MONTH = {
         "monthly": "$49 / 月",
@@ -310,13 +318,13 @@ def generate_landing_page() -> str:
 
     # SEO + GA4 head (plain strings so literal { } need no f-string escaping).
     seo_head = """<title>台股量化選股訊號｜大飆股 DNA 每日掃描 $49/月</title>
-<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月，7 天試用。">
+<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月起，隨時可取消。">
 <link rel="canonical" href="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="zh_TW" />
 <meta property="og:url" content="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:title" content="大飆股 DNA — 台股每日量化選股訊號" />
-<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月，7 天試用。" />
+<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月起，隨時可取消。" />
 <meta property="og:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
@@ -366,6 +374,9 @@ def generate_landing_page() -> str:
     .signal {{ background:#0f172a; border-radius:12px; padding:15px; margin:10px 0; border-left:4px solid #22c55e; }}
     .signal.sell {{ border-left-color:#ef4444; }}
     footer {{ text-align:center; padding:30px; color:#475569; }}
+    .disclaimer {{ background:#1a1300; border:1px solid #a16207; border-radius:12px; padding:16px 20px; margin:18px 0; color:#fcd34d; font-size:.92rem; line-height:1.6; }}
+    .disclaimer b {{ color:#fde68a; }}
+    .terms {{ background:#0f172a; border-radius:12px; padding:16px 20px; margin:14px 0; color:#94a3b8; font-size:.88rem; line-height:1.6; }}
 </style>
 </head>
 <body>
@@ -389,9 +400,10 @@ def generate_landing_page() -> str:
             <p style="color:#94a3b8;margin:10px 0;">
                 Every signal comes from the same 9-step quant strategy, back-tested across
                 <b>2004–2026</b> on the full Taiwan market. The <b>full methodology and backtest are public</b> — study the rules before you subscribe.
-                <br><span style="font-size:.85rem;color:#64748b;">Note: the latest performance figures are being re-validated after a methodology fix — treat them as illustrative, not a promise of returns.</span>
+                <br><span style="font-size:.85rem;color:#64748b;">Note: all backtests are hypothetical and the latest performance figures are being re-validated after a methodology fix — treat them as illustrative, not a promise or indication of future returns.</span>
             </p>
             <a href="https://slashmantools.us/twse-backtests/" target="_blank" class="cta-btn" style="max-width:320px;background:linear-gradient(135deg,#3b82f6,#2563eb);">See the methodology & backtests (free) →</a>
+            <p class="disclaimer">{DISCLAIMER}</p>
         </div>
 
         <div class="preview">
@@ -421,6 +433,15 @@ def generate_landing_page() -> str:
 
         <h2 style="text-align:center;margin:30px 0;">📋 Pricing Plans</h2>
         <div class="pricing-grid">{pricing_cards}</div>
+
+        <p class="disclaimer">{DISCLAIMER}</p>
+
+        <div class="terms">
+            <b style="color:#cbd5e1;">訂閱與退款說明</b><br>
+            價格以美元計價，透過 Ko-fi 結帳。月繳每月扣款、季繳每季扣款、年繳每年扣款；終身方案為一次付清。
+            訂閱可<b>隨時取消</b>——回覆任一封訊號信或於 Ko-fi 帳戶管理即可，取消後於當期結束停止續扣、當期已付費用不影響存取至期末。
+            退款請於購買後來信 <a href="mailto:premium@hermes-invest.com" style="color:#60a5fa;">premium@hermes-invest.com</a> 洽詢；因本服務為數位資訊內容，退款依 Ko-fi 平台政策與個案處理。
+        </div>
 
         <footer>
             <p>TWSE Premium by slashman413 · Data source: public market info</p>
