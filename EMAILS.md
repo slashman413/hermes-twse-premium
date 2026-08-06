@@ -1,4 +1,4 @@
-# TWSE Premium — 訂閱歡迎序列（$49/月 訂閱制，zh-TW）
+# TWSE Premium — 訂閱歡迎序列（$19/月 訂閱制，zh-TW）
 
 Ko-fi 不支援原生 drip 序列。Email 1（開通確認）已由 `scripts/premium.py::send_welcome_email`
 在註冊時自動寄出。Email 2–4 需搭配排程寄送器或外部工具（如 Loops / MailerLite）觸發。

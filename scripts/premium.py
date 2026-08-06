@@ -15,12 +15,12 @@ CUSTOMERS_FILE = DATA_DIR / "customers.json"
 SIGNAL_LOG = DATA_DIR / "signals.json"
 INCOME_LOG = DATA_DIR / "income_log.json"
 
-# Pricing
+# Pricing (2026-08-06: repriced per hot-seller survey — $19/mo entry, was $49/mo)
 TIERS = {
-    "monthly": {"price": 49, "name": "Monthly", "signals_per_day": 2, "sms": False},
-    "quarterly": {"price": 99, "name": "Quarterly", "signals_per_day": 4, "sms": False},
-    "annual": {"price": 299, "name": "Annual", "signals_per_day": 10, "sms": True},
-    "lifetime": {"price": 999, "name": "Lifetime", "signals_per_day": 999, "sms": True},
+    "monthly": {"price": 19, "name": "Monthly", "signals_per_day": 2, "sms": False},
+    "quarterly": {"price": 49, "name": "Quarterly", "signals_per_day": 4, "sms": False},
+    "annual": {"price": 149, "name": "Annual", "signals_per_day": 10, "sms": True},
+    "lifetime": {"price": 499, "name": "Lifetime", "signals_per_day": 999, "sms": True},
 }
 
 # Map Ko-fi tier names to our internal keys
@@ -284,12 +284,12 @@ def generate_landing_page() -> str:
     )
     RECOMMENDED = "annual"
     PER_MONTH = {
-        "monthly": "$49 / 月",
-        "quarterly": "≈ $33 / 月 · 每季扣款",
-        "annual": "≈ $25 / 月 · 年繳",
+        "monthly": "$19 / 月",
+        "quarterly": "≈ $16 / 月 · 每季扣款",
+        "annual": "≈ $12 / 月 · 年繳",
         "lifetime": "一次付清 · 終身使用",
     }
-    SAVINGS = {"quarterly": "省 33%", "annual": "省 49%", "lifetime": ""}
+    SAVINGS = {"quarterly": "省 14%", "annual": "省 35%", "lifetime": ""}
     pricing_cards = ""
     for key, tier in TIERS.items():
         rec = " recommended" if key == RECOMMENDED else ""
@@ -317,19 +317,19 @@ def generate_landing_page() -> str:
         </div>"""
 
     # SEO + GA4 head (plain strings so literal { } need no f-string escaping).
-    seo_head = """<title>台股量化選股訊號｜大飆股 DNA 每日掃描 $49/月</title>
-<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月起，隨時可取消。">
+    seo_head = """<title>台股量化選股訊號｜大飆股 DNA 每日掃描 $19/月</title>
+<meta name="description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$19/月起，隨時可取消。">
 <link rel="canonical" href="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="zh_TW" />
 <meta property="og:url" content="https://slashmantools.us/hermes-twse-premium/" />
 <meta property="og:title" content="大飆股 DNA — 台股每日量化選股訊號" />
-<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$49/月起，隨時可取消。" />
+<meta property="og:description" content="每日盤後大飆股 DNA 量化掃描，2004–2026 全市場回測的 9 步策略（方法公開）。今日進出場訊號 + 名單，$19/月起，隨時可取消。" />
 <meta property="og:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://slashmantools.us/hermes-twse-premium/og.png" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 全市場回測（方法公開）。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"49.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
+{"@context":"https://schema.org","@type":"Product","name":"大飆股 DNA Premium","description":"台股每日量化選股訊號，9 步策略，2004–2026 全市場回測（方法公開）。","brand":{"@type":"Brand","name":"大飆股 DNA"},"offers":{"@type":"Offer","price":"19.00","priceCurrency":"USD","url":"https://slashmantools.us/hermes-twse-premium/"}}
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MY95FHB8JG"></script>
 <script>
@@ -391,7 +391,7 @@ def generate_landing_page() -> str:
             <h2>🔍 今日掃描結果</h2>
             <p id="scan-summary" style="color:#94a3b8;">Loading…</p>
             <div id="signals"></div>
-            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:340px;">🔓 解鎖今日訊號 — 每月 $49 起</a>
+            <a href="https://ko-fi.com/s/b99720d13d" class="cta-btn" style="margin-top:15px;max-width:340px;">🔓 解鎖今日訊號 — 每月 $19 起</a>
             <p style="text-align:center;color:#64748b;font-size:.85rem;margin-top:10px;">解鎖後每交易日 09:00 前送達 · 隨時可取消 · 非投資建議</p>
         </div>
 
@@ -420,7 +420,7 @@ def generate_landing_page() -> str:
                     <th style="padding:8px;border-bottom:1px solid #334155;color:#22c55e;">TWSE Premium</th>
                 </tr></thead>
                 <tbody style="color:#94a3b8;">
-                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">年費</td><td style="padding:8px;border-bottom:1px solid #1e293b;">NT$8 萬 – 100 萬+</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">約 NT$1.5 萬（US$49/月）</td></tr>
+                    <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">年費</td><td style="padding:8px;border-bottom:1px solid #1e293b;">NT$8 萬 – 100 萬+</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">約 NT$6,000（US$19/月）</td></tr>
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">績效揭露</td><td style="padding:8px;border-bottom:1px solid #1e293b;">不公開，信任個人</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">2004–2026 完整回測，方法與規則公開</td></tr>
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">訊號時效</td><td style="padding:8px;border-bottom:1px solid #1e293b;">分級，一般會員較慢</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">系統化，人人同時收到</td></tr>
                     <tr><td style="padding:8px;border-bottom:1px solid #1e293b;">選股方式</td><td style="padding:8px;border-bottom:1px solid #1e293b;">老師喊盤，主觀判斷</td><td style="padding:8px;border-bottom:1px solid #1e293b;color:#e2e8f0;">9 步規則化量化掃描</td></tr>

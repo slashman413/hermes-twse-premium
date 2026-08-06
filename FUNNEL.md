@@ -5,7 +5,7 @@
 | Tier | Price | What you get |
 |------|-------|--------------|
 | Free | $0 | Full 2004–2026 historical backtests, strategy methodology, GitHub Pages dashboard |
-| Premium | $49/mo · $99/qtr · $299/yr | Daily actionable scan, weekly results digest, email alerts |
+| Premium | $19/mo · $49/qtr · $149/yr | Daily actionable scan, weekly results digest, email alerts |
 
 Ko-fi checkout: https://ko-fi.com/s/b99720d13d
 
@@ -68,10 +68,10 @@ Free dashboard visitor
   |
   ├─ Reads weekly trust post → sees honest last-week results
   |
-  └─ Clicks Ko-fi CTA → $49/mo checkout
+  └─ Clicks Ko-fi CTA → $19/mo checkout
 ```
 
-Target: 204 monthly subscribers = $10,000/month at $49/mo.
+Target: 527 monthly subscribers = $10,000/month at $19/mo.
 Realistic near-term: 20 subscribers ($980/mo) within 90 days of launch with consistent weekly posts and basic SEO.
 
 ---

@@ -8,7 +8,7 @@ When a customer subscribes on Ko-fi:
 Ko-fi Webhook → GitHub API → Auto-register → Daily emails
      ↑              ↑              ↑              ↑
   Customer        Webhook       premium.py     scan.yml
-  pays $49       bridge        adds to        sends signal
+  pays $19       bridge        adds to        sends signal
                  forwards      customers.     email to
                                json           customer
 ```
@@ -62,6 +62,6 @@ Then edit `data/customers.json` → set `"status": "cancelled"`.
 
 | Tier | Price | Scans/day | SMS |
 |------|-------|-----------|-----|
-| Monthly | $49 | 2 | No |
-| Quarterly | $99 | 4 | No |
-| Annual | $299 | 10 | Yes |
+| Monthly | $19 | 2 | No |
+| Quarterly | $49 | 4 | No |
+| Annual | $149 | 10 | Yes |
